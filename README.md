@@ -23,8 +23,8 @@ Open [Wallarm Dashboard -> Settings -> API tokens](https://us1.my.wallarm.com/se
 ### Install Wallarm Sidecar using Helm
 1. Add and update the Wallarm Helm repo:
 ```
-# helm repo add wallarm https://charts.wallarm.com
-# helm repo update wallarm
+helm repo add wallarm https://charts.wallarm.com
+helm repo update wallarm
 ```
 2. Create a values.yaml file to configure your Wallarm deployment. Paste your API token into the value for "token:":
 ```
@@ -36,11 +36,13 @@ config:
 ```
 3. Create a namespace for the Sidecar, install using Wallarm's helm chart and the values.yaml file you just created:
 ```
-# helm install --version 6.3.0  challengev001 wallarm/wallarm-sidecar --wait -n wallarm-sidecar --create-namespace -f values.yaml
+helm install --version 6.3.0  challengev001 wallarm/wallarm-sidecar --wait -n wallarm-sidecar --create-namespace -f values.yaml
 ```
 4. Verify the Wallarm pods are running:
 ```
-# kubectl -n wallarm-sidecar get pods
+kubectl -n wallarm-sidecar get pods
+```
+```
 NAME                                                           READY   STATUS    RESTARTS   AGE
 challengev001-wallarm-sidecar-controller-7b66b95cb6-n4hps      1/1     Running   0          26h
 challengev001-wallarm-sidecar-postanalytics-77bdf84fcf-nkfmj   3/3     Running   0          26h
@@ -49,7 +51,7 @@ challengev001-wallarm-sidecar-postanalytics-77bdf84fcf-nkfmj   3/3     Running  
 ### Modify your application to enable Wallarm filtering
 1. Edit your application's deployment to inject a Wallarm Sidecar. In this example the application is called nginx and is in a namespace called app1:
 ```
-# kubectl -n app1 edit deployment nginx
+kubectl -n app1 edit deployment nginx
 ```
 To enable Wallarm in the deployment add the following to the deployment's spec -> template -> metatdata -> labels:
 ```
@@ -86,26 +88,32 @@ spec:
 ```
 2. Save and exit the file, if your edits are valid a new pod with an additional container will spin up. This additional container is the Wallarm Sidecar:
 ```
-# kubectl -n app1 get pods
+kubectl -n app1 get pods
+```
+```
 NAME                    READY   STATUS    RESTARTS   AGE
 nginx-87b7c5489-knd8b   0/2     Running   0          8s
 nginx-c74f4ccd9-lxvfx   1/1     Running   0          4m41s
 ```
 Once the new pod is ready, the old pod is removed:
 ```
-# kubectl -n app1 get pods
+kubectl -n app1 get pods
+```
+```
 NAME                    READY   STATUS    RESTARTS   AGE
 nginx-87b7c5489-knd8b   2/2     Running   0          2m29s
 ```
 3. Optional, check the wallarm-sidecar-controller's logs to verify 
 ```
-# kubectl get pods -n wallarm-sidecar
+kubectl get pods -n wallarm-sidecar
+```
+```
 NAME                                                           READY   STATUS    RESTARTS   AGE
 challengev001-wallarm-sidecar-controller-7b66b95cb6-n4hps      1/1     Running   0          26h
 challengev001-wallarm-sidecar-postanalytics-77bdf84fcf-nkfmj   3/3     Running   0          26h
 ```
 ```
-# kubectl -n wallarm-sidecar logs challengev001-wallarm-sidecar-controller-7b66b95cb6-n4hps
+kubectl -n wallarm-sidecar logs challengev001-wallarm-sidecar-controller-7b66b95cb6-n4hps
 ```
 ```
 INFO[83937] action=mutationreview kind="/v1, Kind=Pod" namespace=app1 operation=CREATE pod= uid=855e964f-ed6c-432a-9410-6b6514a0daca userinfo="{system:serviceaccount:kube-system:replicaset-controller eca1943f-c2d5-4afc-aa52-c69553f1010c [system:serviceaccounts system:serviceaccounts:kube-system system:authenticated] map[authentication.kubernetes.io/credential-id:[JTI=7f4ff047-c1d7-4efc-862f-dd106fea883e]]}"
@@ -116,7 +124,7 @@ INFO[83937] action=mutationreview kind="/v1, Kind=Pod" namespace=app1 operation=
 Wallarm's default [filtration mode](https://docs.wallarm.com/admin-en/configure-wallarm-mode/) is "monitoring", to enable blocking:
 1. Edit your application's deployment:
 ```
-# kubectl -n app1 edit deployment nginx
+kubectl -n app1 edit deployment nginx
 ```
 2. Set Wallarm's mode to blocking add the following annotation to the deployment's spec -> template -> metatdata -> :
 ```
@@ -155,7 +163,7 @@ spec:
 3. Save your edits and wait for the newly configured pod to spin up.
 4. If blocking is enabled correctly, the following should return an http 403 error.  If blocking is not active, it will return an http 404 error. Alter the URL to have the correct hostname or IP:PORT port for your service:
 ```
-# curl localhost:32040/etc/passwd
+curl localhost:32040/etc/passwd
 <html>
 <head><title>403 Forbidden</title></head>
 <body>
