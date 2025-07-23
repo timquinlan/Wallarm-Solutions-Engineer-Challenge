@@ -2,15 +2,15 @@
 
 ## Summary
 
-I chose to deploy a sidecar because it seems like the quickest way to demonstrate Wallarm to Kubernetes users since it doesn't require any changes to the exisisting cluster networking setup. I set up a cluster with two applications, one gets a Wallarm Sidecar, the other remains unprotected.  The cluster is a simple k3s deployment with a Traefik ingress controller and the layout is:
+I chose to deploy a sidecar because it seems like the quickest way to demonstrate Wallarm to Kubernetes users since it doesn't require any changes to the exisisting cluster networking setup. I set up a k3s cluster with a Traefik ingress controller. The cluster serves two applications, one with a Wallarm Sidecar, one without.  The layout is:
 ![Cluster Diagram](imgs/Diagram.png)
 
 ## Troubleshooting
 
 The only issues I encountered were self-inflicted:  
 * Initially deployed on a k3s VM running on my ARM Macbook. I had an issue with the postanalytics pod failing to start the wstore container. I tried to specify the node architecture in values.yaml with no result. Even with this error the WAF seemed to work, but I moved my work to an x86 cluster out of caution.  
-* Forwarded a port from the host to the NGINX container, but the WAF was not getting detected. Once I changed gotestwaf to point to the service port it started to work.
-* Initially I installed gotestwaf in my user account on an x86 box running Debian 12 (golang 1.19) and got the error "unknown directive: toolchain". I found online that this directive was introduced in golang 1.21. Rather than tweak my stable box, I simply moved to a box with more up-to-date packages.
+* Forwarded a port from the host to the NGINX container, but the WAF was not detected by gotestwaf. Once I changed gotestwaf to point to the service port it started to work.
+* Initially I installed gotestwaf on an x86 box running Debian 12 (golang 1.19) and got the error "unknown directive: toolchain". I found online that this directive was introduced in golang 1.21. Rather than tweak my stable box, I simply moved to a box with more up-to-date packages.
 
 ## Deployment Instructions
 
