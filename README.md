@@ -2,7 +2,7 @@
 
 ## Summary
 
-I chose to deploy a sidecar because it seems like the quickest way to demonstrate Wallarm to Kubernetes users since it doesn't require any changes to the exisisting cluster networking setup. I set up a k3s cluster with a Traefik ingress controller. The cluster serves two applications, one with a Wallarm Sidecar, one without.  The layout is:
+I chose to deploy a sidecar because it seems like the quickest way to demonstrate Wallarm to Kubernetes users since it doesn't require any changes to the exisisting cluster networking setup. I set up a k3s cluster with a Traefik ingress controller. The cluster serves two applications, one with a Wallarm Sidecar, one without.  The traffic flow is:
 ![Cluster Diagram](imgs/Diagram.png)
 
 ## Troubleshooting
